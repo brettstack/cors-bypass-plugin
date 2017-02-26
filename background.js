@@ -17,46 +17,50 @@ var requestListener = function(details){
 		}
 	}
 	if(!flag) details.requestHeaders.push(rule);
-	
+
 	for (i = 0; i < details.requestHeaders.length; ++i) {
 		if (details.requestHeaders[i].name.toLowerCase() === "access-control-request-headers") {
-			accessControlRequestHeaders = details.requestHeaders[i].value	
+			accessControlRequestHeaders = details.requestHeaders[i].value
 		}
-	}	
-	
+	}
+
 	return {requestHeaders: details.requestHeaders};
 };
 
 var responseListener = function(details){
-	var flag = false,
-	rule = {
-			"name": "Access-Control-Allow-Origin",
-			"value": "*"
-		};
+	// console.log(details)
+	// console.log(details.originUrl)
+	// chrome.tabs.get(details.tabId, function(tab) {
+		// console.log(tab)
+		var flag = false,
+		rule = {
+				"name": "Access-Control-Allow-Origin",
+				"value": "http://www.pokemon.com"//only supported by firefox details.originUrl//tab.location.origin
+			};
 
-	for (var i = 0; i < details.responseHeaders.length; ++i) {
-		if (details.responseHeaders[i].name.toLowerCase() === rule.name.toLowerCase()) {
-			flag = true;
-			details.responseHeaders[i].value = rule.value;
-			break;
+		for (var i = 0; i < details.responseHeaders.length; ++i) {
+			if (details.responseHeaders[i].name.toLowerCase() === rule.name.toLowerCase()) {
+				flag = true;
+				details.responseHeaders[i].value = rule.value;
+				break;
+			}
 		}
-	}
-	if(!flag) details.responseHeaders.push(rule);
+		if(!flag) details.responseHeaders.push(rule);
 
-	if (accessControlRequestHeaders) {
+		if (accessControlRequestHeaders) {
 
-		details.responseHeaders.push({"name": "Access-Control-Allow-Headers", "value": accessControlRequestHeaders});
+			details.responseHeaders.push({"name": "Access-Control-Allow-Headers", "value": accessControlRequestHeaders});
 
-	}
+		}
 
-	if(exposedHeaders) {
-		details.responseHeaders.push({"name": "Access-Control-Expose-Headers", "value": exposedHeaders});
-	}
+		if(exposedHeaders) {
+			details.responseHeaders.push({"name": "Access-Control-Expose-Headers", "value": exposedHeaders});
+		}
 
-	details.responseHeaders.push({"name": "Access-Control-Allow-Methods", "value": "GET, PUT, POST, DELETE, HEAD, OPTIONS"});
-
-	return {responseHeaders: details.responseHeaders};
-	
+		details.responseHeaders.push({"name": "Access-Control-Allow-Methods", "value": "GET, PUT, POST, DELETE, HEAD, OPTIONS"});
+console.log(details.responseHeaders)
+		return {responseHeaders: details.responseHeaders};
+	// })
 };
 
 /*On install*/

@@ -24,6 +24,7 @@ app.controller('PopupCtrl', ['$scope', function($scope) {
 		});
 
 		$scope.$watch('urls', function(newValue, oldValue) {
+			console.log(newValue, $scope.urls)
 			chrome.storage.local.set({'urls': $scope.urls});
 			chrome.extension.getBackgroundPage().reload();
 		});
@@ -34,8 +35,10 @@ app.controller('PopupCtrl', ['$scope', function($scope) {
 	};
 
 	$scope.addUrl = function() {
-		if($scope.url && $.inArray($scope.url, $scope.urls) == -1) {
+		console.log($scope.url, $scope.urls, $scope.urls.indexOf($scope.url))
+		if($scope.url && $scope.urls.indexOf($scope.url) === -1) {
 			$scope.urls.unshift($scope.url);
+			console.log($scope.urls)
 		}
 		$scope.url = '';
 	};
